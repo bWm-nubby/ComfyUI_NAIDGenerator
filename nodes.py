@@ -4,6 +4,7 @@ import io
 from pathlib import Path
 import folder_paths
 import zipfile
+from PIL import Image
 
 from .utils import *
 
@@ -207,7 +208,11 @@ class GenerateNAID:
         d.mkdir(exist_ok=True)
         (d / file).write_bytes(image_bytes)
 
-        image = bytes_to_image(image_bytes)
+        image = Image.open(io.BytesIO(image_bytes))
+        image = image.convert("RGB")
+        image = np.array(image).astype(np.float32) / 255.0
+        image = torch.from_numpy(image)[None,]
+        print(type(image))
         return (image,)
 
 
