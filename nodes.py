@@ -136,6 +136,7 @@ class GenerateNAID:
         return {
             "required": {
                 "limit_opus_free": ("BOOLEAN", { "default": True }),
+                "save_raw_nai": ("BOOLEAN", {"default": True}),
                 "width": ("INT", { "default": 832, "min": 64, "max": 1600, "step": 64, "display": "number" }),
                 "height": ("INT", { "default": 1216, "min": 64, "max": 1600, "step": 64, "display": "number" }),
                 "positive": ("STRING", { "default": ", best quality, amazing quality, very aesthetic, absurdres", "multiline": True, "dynamicPrompts": False }),
@@ -156,7 +157,7 @@ class GenerateNAID:
     FUNCTION = "generate"
     CATEGORY = "NovelAI"
 
-    def generate(self, limit_opus_free, width, height, positive, negative, steps, cfg, smea, sampler, scheduler, seed, uncond_scale, cfg_rescale, option=None):
+    def generate(self, limit_opus_free, save_raw_nai, width, height, positive, negative, steps, cfg, smea, sampler, scheduler, seed, uncond_scale, cfg_rescale, option=None):
         width, height = calculate_resolution(width*height, (width, height))
 
         # ref. novelai_api.ImagePreset
@@ -227,17 +228,14 @@ class GenerateNAID:
         image_bytes = zipped.read(zipped.infolist()[0]) # only support one n_samples
 
         ## save original png to comfy output dir
-        full_output_folder, filename, counter, subfolder, filename_prefix = folder_paths.get_save_image_path("NAI_autosave", self.output_dir)
-        file = f"{filename}_{counter:05}_.png"
-        d = Path(full_output_folder)
-        d.mkdir(exist_ok=True)
-        (d / file).write_bytes(image_bytes)
-
-        image = Image.open(io.BytesIO(image_bytes))
-        image = image.convert("RGB")
-        image = np.array(image).astype(np.float32) / 255.0
-        image = torch.from_numpy(image)[None,]
-        print(type(image))
+        if save_raw_nai:
+            full_output_folder, filename, counter, subfolder, filename_prefix = folder_paths.get_save_image_path("NAI_autosave", self.output_dir)
+            file = f"{filename}_{counter:05}_.png"
+            d = Path(full_output_folder)
+            d.mkdir(exist_ok=True)
+            (d / file).write_bytes(image_bytes)
+            
+        image = bytes_to_image(image_bytes)
         return (image,)
 
 
