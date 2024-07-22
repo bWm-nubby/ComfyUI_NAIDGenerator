@@ -67,6 +67,7 @@ def naimask_to_base64(image):
 
 def bytes_to_image(image_bytes):
     i = Image.open(io.BytesIO(image_bytes))
+    i = i.convert("RGB")
     i = ImageOps.exif_transpose(i)
     image = np.array(i).astype(np.float32) / 255.0
     return torch.from_numpy(image)[None,]

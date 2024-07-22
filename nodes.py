@@ -4,6 +4,7 @@ import io
 from pathlib import Path
 import folder_paths
 import zipfile
+from PIL import Image
 
 from .utils import *
 
@@ -159,6 +160,7 @@ class GenerateNAID:
         return {
             "required": {
                 "limit_opus_free": ("BOOLEAN", { "default": True }),
+                "save_raw_nai": ("BOOLEAN", {"default": True}),
                 "width": ("INT", { "default": 832, "min": 64, "max": 1600, "step": 64, "display": "number" }),
                 "height": ("INT", { "default": 1216, "min": 64, "max": 1600, "step": 64, "display": "number" }),
                 "positive": ("STRING", { "default": ", best quality, amazing quality, very aesthetic, absurdres", "multiline": True, "dynamicPrompts": False }),
@@ -179,7 +181,7 @@ class GenerateNAID:
     FUNCTION = "generate"
     CATEGORY = "NovelAI"
 
-    def generate(self, limit_opus_free, width, height, positive, negative, steps, cfg, smea, sampler, scheduler, seed, uncond_scale, cfg_rescale, option=None):
+    def generate(self, limit_opus_free, save_raw_nai, width, height, positive, negative, steps, cfg, smea, sampler, scheduler, seed, uncond_scale, cfg_rescale, option=None):
         width, height = calculate_resolution(width*height, (width, height))
 
         # ref. novelai_api.ImagePreset
@@ -257,6 +259,9 @@ class GenerateNAID:
         if action == "infill" and model != "nai-diffusion-2":
             model = f"{model}-inpainting"
 
+        zipped_bytes = generate_image(self.access_token, positive, model, action, params)
+        zipped = zipfile.ZipFile(io.BytesIO(zipped_bytes))
+        image_bytes = zipped.read(zipped.infolist()[0]) # only support one n_samples
 
         image = blank_image()
         try:
