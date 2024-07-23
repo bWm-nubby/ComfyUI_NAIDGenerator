@@ -40,7 +40,7 @@ class ModelOption:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "model": (["safe-diffusion", "nai-diffusion", "nai-diffusion-furry", "nai-diffusion-2", "nai-diffusion-3"], { "default": "nai-diffusion-3" }),
+                "model": (["safe-diffusion", "nai-diffusion", "nai-diffusion-furry", "nai-diffusion-2", "nai-diffusion-3", "nai-diffusion-furry-3"], { "default": "nai-diffusion-3" }),
             },
             "optional": { "option": ("NAID_OPTION",) },
         }
@@ -210,7 +210,7 @@ class GenerateNAID:
 #            "extra_noise_seed": seed,    #TODO: find why it disappear
 #            "decrisper": False,
         }
-        model = "nai-diffusion-3"
+        model = ["nai-diffusion-3", "nai-diffusion-furry-3"]
         action = "generate"
 
         if option:
@@ -245,7 +245,7 @@ class GenerateNAID:
         retry = option["retry"] if option and "retry" in option else None
 
         if limit_opus_free:
-            pixel_limit = 1024*1024 if model in ("nai-diffusion-2", "nai-diffusion-3",) else 640*640
+            pixel_limit = 1024*1024 if model in ("nai-diffusion-2", "nai-diffusion-3", "nai-diffusion-furry-3") else 640*640
             if width * height > pixel_limit:
                 max_width, max_height = calculate_resolution(pixel_limit, (width, height))
                 params["width"] = max_width
@@ -253,7 +253,7 @@ class GenerateNAID:
             if steps > 28:
                 params["steps"] = 28
 
-        if sampler == "ddim" and model == "nai-diffusion-3":
+        if sampler == "ddim" and model in ["nai-diffusion-3", "nai-diffusion-furry-3"]:
             params["sampler"] = "ddim_v3"
 
         if action == "infill" and model != "nai-diffusion-2":
