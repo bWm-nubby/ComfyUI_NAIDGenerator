@@ -1,9 +1,16 @@
+## Note
+This fork is my personal continuation of https://github.com/Tsukreya/ComfyUI_NAIDGenerator which is no longer maintained.
+
+Features added to this fork:
+* Return RGB image which can be further processed usuing normal comfy workflows such as upscaling and/or Img2ImgOption
+* Add option to disable saving NAI image
+* Add support for nai-diffusion-furry-3 model
+
 # ComfyUI_NAIDGenerator
 A [ComfyUI](https://github.com/comfyanonymous/ComfyUI) extension for generating image via NovelAI API.
 
 ## Installation
-- `git clone https://github.com/bedovyy/ComfyUI_NAIDGenerator` into the `custom_nodes` directory.
-- or 'Install via Git URL' from [Comfyui Manager](https://github.com/ltdrdata/ComfyUI-Manager)
+- `git clone https://github.com/bWm-nubby/ComfyUI_NAIDGenerator.git` into the `custom_nodes` directory.
 
 ## Setting up NAI account
 Before using the nodes, you should set NAI_ACCESS_TOKEN on `ComfyUI/.env` file.
