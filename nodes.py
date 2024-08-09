@@ -1,3 +1,4 @@
+import copy
 import dotenv
 from os import environ as env
 import io
@@ -49,7 +50,7 @@ class ModelOption:
     FUNCTION = "set_option"
     CATEGORY = "NovelAI"
     def set_option(self, model, option=None):
-        option = option or {}
+        option = copy.deepcopy(option) if option else {}
         option["model"] = model
         return (option,)
 
@@ -106,7 +107,7 @@ class VibeTransferOption:
     FUNCTION = "set_option"
     CATEGORY = "NovelAI"
     def set_option(self, image, information_extracted, strength, option=None):
-        option = option or {}
+        option = copy.deepcopy(option) if option else {}
         if "vibe" not in option:
             option["vibe"] = []
 
@@ -128,7 +129,7 @@ class NetworkOption:
     FUNCTION = "set_option"
     CATEGORY = "NovelAI"
     def set_option(self, ignore_errors, timeout_sec, retry, option=None):
-        option = option or {}
+        option = copy.deepcopy(option) if option else {}
         option["ignore_errors"] = ignore_errors
         option["timeout"] = timeout_sec
         option["retry"] = retry
